@@ -6,6 +6,6 @@ module.exports = {
         if (!serverQueue) return message.channel.send('There is no player to stop!');
 
         serverQueue.songs = [];
-        serverQueue.connection.disconnect();
+        serverQueue.connection.dispatcher.end();
     },
 };
