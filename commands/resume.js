@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     name: 'resume',
     description: 'Resume music for discord-bot',
     execute(message, serverQueue) {

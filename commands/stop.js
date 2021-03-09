@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     name: 'stop',
     description: 'Stop music for discord-bot',
     execute(message, serverQueue) {

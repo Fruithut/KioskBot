@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     name: 'skip',
     description: 'Skip music for discord-bot',
     execute(message, serverQueue) {

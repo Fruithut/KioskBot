@@ -1,20 +1,21 @@
-const { token, prefix } = require('./config.json');
-const { OpusEncoder } = require('@discordjs/opus');
-const Discord = require('discord.js');
-const ffmpeg = require('ffmpeg-static');
-const ytdl = require('ytdl-core');
-const fs = require('fs');
+import config from './config.js';
+import discordjs from 'discord.js';
+import ffmpeg from 'ffmpeg-static';
+import ytdl from 'ytdl-core';
+const { token, prefix } = config;
+const { Client, Collection } = discordjs;
 
-const globalQueueMap = new Map();;
-const client = new Discord.Client();;
-client.commands = new Discord.Collection();
+const globalQueueMap = new Map();
+const client = new Client();
+client.commands = new Collection();
 
-// Fetch command modules
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
-}
+import pause from './commands/pause.js';
+import resume from './commands/resume.js';
+import skip from './commands/skip.js';
+import stop from './commands/stop.js';
+import help from './commands/help.js';
+
+[pause, resume, skip, stop, help].forEach((c) => client.commands.set(c.name, c));
 
 client.login(token);
 
@@ -37,9 +38,6 @@ async function parseCommand(message, command, argsList) {
         await handleMediaPlayback(message, argsList, queueFromRequest)
     } else if (client.commands.get(command)) {
         client.commands.get(command).execute(message, queueFromRequest)
-    } else if (command == 'help') {
-        message.react('🔧');
-        message.channel.send(`[COMMANDS]\n${prefix}play {youtube-link}\n${prefix}pause\n${prefix}resume\n${prefix}stop\n${prefix}leave\n${prefix}help`);
     } else {
         message.react('❓');
         message.channel.send('Command not understood please refer to the instructions manual: ?help');
