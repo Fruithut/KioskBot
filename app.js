@@ -1,10 +1,12 @@
 const { token, prefix } = require('./config.json');
+const { OpusEncoder } = require('@discordjs/opus');
+const Discord = require('discord.js');
 const ffmpeg = require('ffmpeg-static');
 const ytdl = require('ytdl-core');
 const fs = require('fs');
-const Discord = require('discord.js');
-const globalQueueMap = new Map();
-const client = new Discord.Client();
+
+const globalQueueMap = new Map();;
+const client = new Discord.Client();;
 client.commands = new Discord.Collection();
 
 // Fetch command modules
@@ -15,6 +17,7 @@ for (const file of commandFiles) {
 }
 
 client.login(token);
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -36,7 +39,7 @@ async function parseCommand(message, command, argsList) {
         client.commands.get(command).execute(message, queueFromRequest)
     } else if (command == 'help') {
         message.react('🔧');
-        message.channel.send(`Commands available:\n${prefix}play {youtube-link}\n${prefix}pause\n${prefix}resume\n${prefix}stop\n${prefix}leave\n${prefix}help`);
+        message.channel.send(`[COMMANDS]\n${prefix}play {youtube-link}\n${prefix}pause\n${prefix}resume\n${prefix}stop\n${prefix}leave\n${prefix}help`);
     } else {
         message.react('❓');
         message.channel.send('Command not understood please refer to the instructions manual: ?help');
@@ -47,12 +50,14 @@ async function handleMediaPlayback(message, argsList, serverQueue) {
     const voiceChannel = message.member.voice.channel;
     const youtubeUrl = argsList[0];
 
-    if (!voiceChannel || !(argsList.length > 0) || !(youtubeUrl.startsWith('https://www.youtube.com/watch'))) return;
+    if (!voiceChannel || !(argsList.length > 0) || !(youtubeUrl.startsWith('https://www.youtube.com/watch'))) {
+        return;
+    }
 
     const songDetails = await ytdl.getInfo(youtubeUrl);
     const song = {
-        title: songDetails.title,
-        url: songDetails.video_url
+        title: songDetails.videoDetails.title,
+        url: songDetails.videoDetails.video_url
     };
 
     if (!serverQueue) {
